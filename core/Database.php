@@ -2,26 +2,38 @@
 
 class Database
 {
-    protected $pdo;
+    private static $instance = null;
+    private $connection;
 
-    public function __construct()
+    private function __construct()
     {
-        $config = require __DIR__ . '/../config/database.php';
+        $host = 'localhost';
+        $dbname = 'todo_list';
+        $user = 'root';
+        $pass = '';
 
-        $dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
+        try {
+            $this->connection = new PDO(
+                "mysql:host=$host;dbname=$dbname;charset=utf8",
+                $user,
+                $pass
+            );
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Koneksi database gagal: " . $e->getMessage());
+        }
+    }
 
-        $this->pdo = new PDO(
-            $dsn,
-            $config['user'],
-            $config['pass'],
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
     }
 
     public function getConnection()
     {
-        return $this->pdo;
+        return $this->connection;
     }
 }
