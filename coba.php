@@ -8,9 +8,7 @@
 </head>
 
 <body>
-    <table>
-        <p>Anjay</p>
-    </table>
+
 </body>
 
 </html>
